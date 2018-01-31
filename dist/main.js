@@ -61,15 +61,16 @@ var StepZilla = function (_Component) {
       var _this2 = this;
 
       this.props.steps.map(function (i, idx) {
+        var item = i;
         if (_this2.props.dontValidate) {
-          i.validated = true;
+          item.validated = true;
         } else {
           // check if isValidated was exposed in the step, if yes then set initial state as not validated (false) or vice versa
           // if HOCValidation is used for the step then mark it as "requires to be validated. i.e. false"
-          i.validated = typeof i.component.type === 'undefined' || typeof i.component.type.prototype.isValidated === 'undefined' && !_this2.isStepAtIndexHOCValidationBased(idx) ? true : false;
+          item.validated = typeof item.component.type === 'undefined' || typeof item.component.type.prototype.isValidated === 'undefined' && !_this2.isStepAtIndexHOCValidationBased(idx);
         }
 
-        return i;
+        return item;
       });
     }
 
@@ -113,7 +114,9 @@ var StepZilla = function (_Component) {
       // last step hide next btn, hide previous btn if supplied as props
       if (currentStep >= this.props.steps.length - 1) {
         showNextBtn = false;
-        showPreviousBtn = this.props.prevBtnOnLastStep === false ? false : true;
+        if (typeof this.props.prevBtnOnLastStep === 'boolean') {
+          showPreviousBtn = this.props.prevBtnOnLastStep;
+        }
       }
 
       return {
@@ -353,7 +356,7 @@ var StepZilla = function (_Component) {
     value: function renderSteps() {
       var _this5 = this;
 
-      return this.props.steps.map(function (s, i) {
+      return this.props.steps.slice(0, -1).map(function (s, i) {
         return _react2.default.createElement(
           'li',
           { className: _this5.getClassName("progtrckr", i), onClick: function onClick(evt) {
