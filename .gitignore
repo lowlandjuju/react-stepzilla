@@ -11,6 +11,7 @@ node_modules
 coverage
 src/examples/dist
 npm-debug.log
+.idea
 
 # Folder view configuration files
 .DS_Store

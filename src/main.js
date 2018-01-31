@@ -25,18 +25,18 @@ export default class StepZilla extends Component {
   // extend the "steps" array with flags to indicate if they have been validated
   applyValidationFlagsToSteps() {
     this.props.steps.map((i, idx) => {
+      const item = i;
       if (this.props.dontValidate) {
-        i.validated = true;
-      }
-      else {
+        item.validated = true;
+      } else {
         // check if isValidated was exposed in the step, if yes then set initial state as not validated (false) or vice versa
         // if HOCValidation is used for the step then mark it as "requires to be validated. i.e. false"
-        i.validated = (typeof i.component.type === 'undefined' ||
-          (typeof i.component.type.prototype.isValidated === 'undefined' &&
-            !this.isStepAtIndexHOCValidationBased(idx))) ? true : false;
+        item.validated = (typeof item.component.type === 'undefined' ||
+          (typeof item.component.type.prototype.isValidated === 'undefined' &&
+            !this.isStepAtIndexHOCValidationBased(idx)));
       }
 
-      return i;
+      return item;
     });
   }
 
@@ -78,7 +78,9 @@ export default class StepZilla extends Component {
     // last step hide next btn, hide previous btn if supplied as props
     if (currentStep >= this.props.steps.length - 1) {
       showNextBtn = false;
-      showPreviousBtn = this.props.prevBtnOnLastStep === false ? false : true;
+      if (typeof this.props.prevBtnOnLastStep === 'boolean') {
+        showPreviousBtn = this.props.prevBtnOnLastStep;
+      }
     }
 
     return {
@@ -281,7 +283,7 @@ export default class StepZilla extends Component {
 
   // render the steps as stepsNavigation
   renderSteps() {
-    return this.props.steps.map((s, i)=> (
+    return this.props.steps.slice(0,-1).map((s, i)=> (
       <li className={this.getClassName("progtrckr", i)} onClick={(evt) => {this.jumpToStep(evt)}} key={i} value={i}>
           <em>{i+1}</em>
           <span>{this.props.steps[i].name}</span>
